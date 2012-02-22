@@ -1,12 +1,12 @@
 package anagrammer
 
 import (
-	"fmt"
-	"os"
-	"sort"
 	"bufio"
+	"fmt"
 	ss "github.com/Leimy/sortstring"
+	"os"
 	"regexp"
+	"sort"
 )
 
 var wordValidator = regexp.MustCompile("^[a-zA-Z]+$")
@@ -20,9 +20,9 @@ func AnagramsFromFile(filename string) map[string][]string {
 	defer file.Close()
 
 	reader := bufio.NewReader(file)
-	var nextTok func () (string, error) 
+	var nextTok func() (string, error)
 
-	nextTok = func () (string, error) {
+	nextTok = func() (string, error) {
 		line, notDone, err := reader.ReadLine()
 		if err != nil {
 			return "", err
@@ -35,7 +35,6 @@ func AnagramsFromFile(filename string) map[string][]string {
 		}
 		return string(line), err
 	}
-
 
 	anagrams := make(map[string][]string)
 
