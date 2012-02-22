@@ -5,7 +5,7 @@ import (
 	"os"
 	"sort"
 	"bufio"
-	ss "gofun/sortstring"
+	ss "github.com/Leimy/sortstring"
 	"regexp"
 )
 
