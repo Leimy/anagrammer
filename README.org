@@ -1,0 +1,6 @@
+* anagrammer
+** Description
+	Finds anagrams in files of one word per line
+** Usage
+	No tests available... see code (that should change)
+
