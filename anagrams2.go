@@ -1,6 +1,7 @@
 package anagrammer
 
 import (
+	"io"
 	"bufio"
 	"fmt"
 	ss "github.com/Leimy/sortstring"
@@ -11,33 +12,41 @@ import (
 
 var wordValidator = regexp.MustCompile("^[a-zA-Z]+$")
 
-func AnagramsFromFile(filename string) map[string][]string {
-	file, err := os.Open(filename)
-	if err != nil {
-		panic("Couldn't open file")
-	}
-
-	defer file.Close()
-
-	reader := bufio.NewReader(file)
+func AnagramsFromReader(in io.Reader) map[string][]string {
+	reader := bufio.NewReader(in)
 	var nextTok func() (string, error)
+	anagrams := make(map[string][]string)
 
 	nextTok = func() (string, error) {
 		line, notDone, err := reader.ReadLine()
 		if err != nil {
 			return "", err
-		} else if notDone {
-			restline, err2 := nextTok() // possible problem
-			if err2 != nil {
-				return "", err2
+		} 
+		for notDone {
+			var nextChunk []byte
+			nextChunk, notDone, err = reader.ReadLine()
+			if err != nil {
+				return "", err
 			}
-			return string(line) + string(restline), nil
+			line = append(line, nextChunk...)
 		}
 		return string(line), err
 	}
-
-	anagrams := make(map[string][]string)
-
+	
+	// nextTok = func() (string, error) {
+	// 	line, notDone, err := reader.ReadLine()
+	// 	if err != nil {
+	// 		return "", err
+	// 	} else if notDone {
+	// 		restline, err2 := nextTok() // possible problem
+	// 		if err2 != nil {
+	// 			return "", err2
+	// 		}
+	// 		return string(line) + string(restline), nil
+	// 	}
+	// 	return string(line), err
+	// }
+	
 	line, linerr := nextTok()
 
 	for linerr == nil {
@@ -57,6 +66,16 @@ func AnagramsFromFile(filename string) map[string][]string {
 	}
 
 	return anagrams
+}
+
+func AnagramsFromFile(filename string) map[string][]string {
+	file, err := os.Open(filename)
+	if err != nil {
+		panic("Couldn't open file")
+	}
+
+	defer file.Close()
+	return AnagramsFromReader(file)
 }
 
 func DumpAnagrams(anagrams *map[string][]string) {
